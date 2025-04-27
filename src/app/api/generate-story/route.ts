@@ -1,9 +1,9 @@
-// app/api/generate/route.ts
 import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
+  baseURL: process.env.OPENAI_API_BASE_URL || 'https://api.openai.com/v1',
 });
 
 export async function POST(req: Request) {
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     이야기는 ${childName}이(가) ${favoriteAnimal || "신비한 친구"}와 함께 ${lesson ? lesson : ""}을 배우는 ${specialElement ? specialElement : ""}에 대한 내용으로 구성해 주세요.`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o', // 또는 다른 원하는 모델
+      model: 'gpt-4o',
       messages: [{ role: 'user', content: prompt }],
     });
 
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     if (story) {
       return NextResponse.json({ story });
     } else {
-      return NextResponse.json({ error: '이야지를 생성하지 못했습니다.' }, { status: 500 });
+      return NextResponse.json({ error: '이야기를 생성하지 못했습니다.' }, { status: 500 });
     }
   } catch (error) {
     console.error('OpenAI API 호출 오류:', error);
